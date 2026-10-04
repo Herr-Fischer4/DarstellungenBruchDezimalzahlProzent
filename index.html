@@ -1,0 +1,1299 @@
+<!-- 
+  Didaktische Konzeption: Autor herr-fischer
+  Code-Erstellung: KI-unterstützt 
+  Prüfung & Anpassung: Manuell bereinigt und auf Lauffähigkeit getestet.
+-->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zahlenwandler: Bruch – Dezimalzahl – Prozent | Realschule Bayern</title>
+  <style>
+    :root {
+      --primary: #005a9c;
+      --primary-dark: #003d6b;
+      --secondary: #eef5fb;
+      --accent: #d97706;
+      --success: #1b5e20;
+      --success-bg: #e8f5e9;
+      --error: #b71c1c;
+      --error-bg: #ffebee;
+      --surface: #ffffff;
+      --bg: #f4f6f9;
+      --text: #1f2937;
+      --text-muted: #4b5563;
+      --border: #cbd5e1;
+      --radius: 12px;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 920px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Didaktische Bruchdarstellung */
+    .m-frac {
+      display: inline-flex;
+      flex-direction: column;
+      vertical-align: middle;
+      text-align: center;
+      padding: 0 4px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 1.15;
+      font-size: 1.05em;
+    }
+    .m-num {
+      padding: 1px 4px;
+      border-bottom: 2px solid currentColor;
+      display: block;
+    }
+    .m-den {
+      padding: 1px 4px;
+      display: block;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    header p {
+      font-size: 0.95rem;
+      opacity: 0.94;
+    }
+
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: var(--surface);
+      padding: 12px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      justify-content: center;
+    }
+
+    .task-chip {
+      min-width: 44px;
+      min-height: 44px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      touch-action: manipulation;
+    }
+
+    .task-chip:hover {
+      background: var(--secondary);
+      border-color: var(--primary);
+    }
+
+    .task-chip.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+
+    .task-chip.solved {
+      border-color: var(--success);
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .task-chip.active.solved {
+      background: var(--success);
+      color: #ffffff;
+    }
+
+    .card {
+      background: var(--surface);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .category-badge {
+      display: inline-block;
+      align-self: flex-start;
+      background: var(--secondary);
+      color: var(--primary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .instruction-box {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--primary-dark);
+      background: #f8fafc;
+      padding: 14px 18px;
+      border-left: 5px solid var(--primary);
+      border-radius: 6px;
+    }
+
+    .context-text {
+      font-size: 1.05rem;
+      background: #fdfdfd;
+      padding: 12px 16px;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      line-height: 1.7;
+    }
+
+    /* Integrierte Gleichungszeilen */
+    .math-flow-container {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .equation-card {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+      background: #ffffff;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1.5px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+      font-size: 1.15rem;
+    }
+
+    .equation-prefix {
+      font-weight: 700;
+      color: var(--primary-dark);
+      display: inline-flex;
+      align-items: center;
+      min-width: 32px;
+    }
+
+    .math-term {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+
+    .rel-equal {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #64748b;
+      margin: 0 2px;
+    }
+
+    .unit-label {
+      font-weight: 600;
+      margin-left: 4px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .frac-input-unit {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      gap: 3px;
+    }
+
+    .frac-input-unit input {
+      width: 58px;
+      height: 38px;
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+      background: #fff;
+    }
+
+    .frac-input-unit input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.15);
+    }
+
+    .frac-input-line {
+      width: 100%;
+      height: 2px;
+      background-color: var(--text);
+    }
+
+    .app-input {
+      min-height: 44px;
+      padding: 6px 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      background: #fff;
+    }
+
+    .app-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 90, 156, 0.15);
+    }
+
+    .app-input.text-center {
+      text-align: center;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      min-height: 44px;
+      padding: 10px 22px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s, transform 0.1s;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: var(--text);
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    .btn-hint {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fde68a;
+    }
+
+    .btn-hint:hover {
+      background: #fde68a;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .feedback-box.visible {
+      display: block;
+    }
+
+    .feedback-box.correct {
+      background-color: var(--success-bg);
+      color: var(--success);
+      border: 1.5px solid #a5d6a7;
+    }
+
+    .feedback-box.incorrect {
+      background-color: var(--error-bg);
+      color: var(--error);
+      border: 1.5px solid #ef9a9a;
+    }
+
+    .hint-box {
+      display: none;
+      background-color: #fffbeb;
+      color: #92400e;
+      border-left: 5px solid var(--accent);
+      padding: 14px 18px;
+      border-radius: 6px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .hint-box.visible {
+      display: block;
+    }
+
+    .solution-box {
+      display: none;
+      background-color: #f1f5f9;
+      border-left: 5px solid #64748b;
+      padding: 16px 18px;
+      border-radius: 6px;
+      font-size: 1.05rem;
+      line-height: 1.9;
+    }
+
+    .solution-box.visible {
+      display: block;
+    }
+
+    .visual-wrapper {
+      margin: 8px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(10, 26px);
+      grid-template-rows: repeat(10, 26px);
+      gap: 2px;
+      background: #cbd5e1;
+      padding: 4px;
+      border-radius: 6px;
+    }
+
+    .grid-cell {
+      width: 26px;
+      height: 26px;
+      background-color: #ffffff;
+    }
+
+    .grid-cell.highlight {
+      background-color: #0284c7;
+    }
+
+    .tape-container {
+      display: flex;
+      width: 100%;
+      max-width: 440px;
+      height: 48px;
+      border: 2px solid #334155;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .tape-block {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-right: 1.5px dashed #334155;
+      background: #f8fafc;
+    }
+
+    .tape-block:last-child {
+      border-right: none;
+    }
+
+    .tape-block.highlight {
+      background: #38bdf8;
+      color: #0c4a6e;
+    }
+
+    .circle-card {
+      background: #ffffff;
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      text-align: center;
+      min-width: 170px;
+    }
+
+    .circle-card svg {
+      width: 130px;
+      height: 130px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .table-view {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0;
+    }
+
+    .table-view th, .table-view td {
+      border: 1.5px solid var(--border);
+      padding: 12px 8px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 1.05rem;
+    }
+
+    .table-view th {
+      background-color: var(--secondary);
+      font-size: 0.95rem;
+      color: var(--primary-dark);
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding: 12px;
+    }
+
+    @media (max-width: 680px) {
+      .equation-card {
+        padding: 12px;
+        gap: 8px;
+      }
+      .grid-container {
+        grid-template-columns: repeat(10, 21px);
+        grid-template-rows: repeat(10, 21px);
+      }
+      .grid-cell {
+        width: 21px;
+        height: 21px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>Brüche, Dezimalzahlen & Prozent</h1>
+    <p>Mathematik 6. Klasse | Realschule Bayern (LehrplanPLUS)</p>
+  </header>
+
+  <div class="nav-bar" id="navBar"></div>
+
+  <main class="card" id="taskCard">
+    <span class="category-badge" id="taskCategory">Kategorie</span>
+    
+    <div class="instruction-box" id="taskInstruction"></div>
+    <div class="context-text" id="taskContext" style="display:none;"></div>
+
+    <div class="visual-wrapper" id="visualContainer"></div>
+
+    <div class="math-flow-container" id="equationContainer"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="checkBtn">Antwort prüfen</button>
+      <button class="btn btn-hint" id="hintBtn">Tipp anzeigen</button>
+      <button class="btn btn-secondary" id="solutionBtn">Musterlösung</button>
+    </div>
+
+    <div class="feedback-box" id="feedbackBox"></div>
+    <div class="hint-box" id="hintBox"></div>
+    <div class="solution-box" id="solutionBox"></div>
+  </main>
+
+  <footer>
+    Didaktisch typografiert gemäß LehrplanPLUS Realschule Bayern &middot; Keine externen Bibliotheken
+  </footer>
+</div>
+
+<script>
+/**
+ * Didaktische Typografie-Engine für Realschule Bayern
+ * Wandelt Brüche und Rechenzeichen in sauberes mathematisches HTML um.
+ */
+function formatMath(text) {
+  if (!text) return "";
+  let res = text.replace(/\*/g, "&middot;");
+  const lines = res.split("\n");
+  const formattedLines = lines.map(line => {
+    line = line.replace(/(\b\d+)\s+(\d+)\/(\d+)\b/g, '$1&nbsp;<span class="m-frac"><span class="m-num">$2</span><span class="m-den">$3</span></span>');
+    line = line.replace(/(\b\d+)\/(\d+)\b/g, '<span class="m-frac"><span class="m-num">$1</span><span class="m-den">$2</span></span>');
+    line = line.replace(/\?\/(\d+)/g, '<span class="m-frac"><span class="m-num">?</span><span class="m-den">$1</span></span>');
+    return line;
+  });
+  return formattedLines.join("<br>");
+}
+
+const taskPool = [
+  {
+    id: 1,
+    category: "Rechnen (Grundlagen)",
+    instruction: "Wandle die Brüche direkt in die Dezimalzahl und den Prozentwert um:",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "17/100",
+        inputs: [
+          { id: "a_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,17"] },
+          { id: "a_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["17", "17%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "3/10",
+        inputs: [
+          { id: "b_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,3", "0,30"] },
+          { id: "b_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["30", "30%"] }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "63/100",
+        inputs: [
+          { id: "c_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,63"] },
+          { id: "c_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["63", "63%"] }
+        ]
+      }
+    ],
+    hint: "Denke daran: Prozent bedeutet 'von Hundert'. 3/10 lässt sich mit 10 auf den Nenner 100 erweitern.",
+    solution: "(a) 17/100 = 0,17 = 17%\n(b) 3/10 = 30/100 = 0,3 = 30%\n(c) 63/100 = 0,63 = 63%"
+  },
+  {
+    id: 2,
+    category: "Rechnen (Grundlagen)",
+    instruction: "Gib jeweils als vollständig gekürzten Bruch und in Prozent an:",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "0,45",
+        inputs: [
+          { id: "a_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "9", correctN: "20" },
+          { id: "a_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["45", "45%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "0,08",
+        inputs: [
+          { id: "b_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "2", correctN: "25" },
+          { id: "b_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["8", "8%"] }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "1,25",
+        inputs: [
+          { id: "c_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "5", correctN: "4" },
+          { id: "c_pct", type: "pct", width: "85px", sub: "Prozent", unit: "%", correct: ["125", "125%"] }
+        ]
+      }
+    ],
+    hint: "Schreibe zunächst den Bruch mit Nenner 100 auf (z. B. 45/100) und kürze dann Zähler und Nenner vollständig.",
+    solution: "(a) 0,45 = 45/100 = 9/20 = 45%\n(b) 0,08 = 8/100 = 2/25 = 8%\n(c) 1,25 = 125/100 = 5/4 = 1 1/4 = 125%"
+  },
+  {
+    id: 3,
+    category: "Rechnen (Grundlagen)",
+    instruction: "Wandle in eine Dezimalzahl und einen vollständig gekürzten Bruch um:",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "32 %",
+        inputs: [
+          { id: "a_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,32"] },
+          { id: "a_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "8", correctN: "25" }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "7 %",
+        inputs: [
+          { id: "b_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,07"] },
+          { id: "b_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "7", correctN: "100" }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "120 %",
+        inputs: [
+          { id: "c_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["1,2", "1,20"] },
+          { id: "c_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "6", correctN: "5" }
+        ]
+      }
+    ],
+    hint: "Teile die Prozentzahl durch 100, um die Dezimalzahl zu erhalten. Setze für den Bruch den Nenner 100 an und kürze.",
+    solution: "(a) 32% = 0,32 = 32/100 = 8/25\n(b) 7% = 0,07 = 7/100\n(c) 120% = 1,2 = 120/100 = 6/5 = 1 1/5"
+  },
+  {
+    id: 4,
+    category: "Erweitern auf Nenner 100",
+    instruction: "Erweitere jeweils auf Nenner 100 und gib Dezimalzahl sowie Prozent an:",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "3/20",
+        inputs: [
+          { id: "a_f100", type: "frac100", sub: "auf Hundertstel erweitert", correct: ["15"] },
+          { id: "a_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,15"] },
+          { id: "a_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["15", "15%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "18/25",
+        inputs: [
+          { id: "b_f100", type: "frac100", sub: "auf Hundertstel erweitert", correct: ["72"] },
+          { id: "b_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,72"] },
+          { id: "b_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["72", "72%"] }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "11/50",
+        inputs: [
+          { id: "c_f100", type: "frac100", sub: "auf Hundertstel erweitert", correct: ["22"] },
+          { id: "c_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,22"] },
+          { id: "c_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["22", "22%"] }
+        ]
+      }
+    ],
+    hint: "Mit welcher Zahl musst du 20, 25 bzw. 50 multiplizieren, um 100 zu erhalten? Erweitere Zähler und Nenner mit dieser Zahl.",
+    solution: "(a) 3/20 = 15/100 = 0,15 = 15%\n(b) 18/25 = 72/100 = 0,72 = 72%\n(c) 11/50 = 22/100 = 0,22 = 22%"
+  },
+  {
+    id: 5,
+    category: "Zuordnung / Tabelle",
+    instruction: "Vervollständige die Tabellenzeilen mit den passenden Darstellungsformen:",
+    isTable: true,
+    rows: [
+      { label: "Zeile 1", known: "3/5", f100Id: "r1_f", f100Corr: "60", decId: "r1_d", decCorr: "0,6", pctId: "r1_p", pctCorr: "60%" },
+      { label: "Zeile 2", fracZId: "r2_fz", fracNId: "r2_fn", fracCorrZ: "7", fracCorrN: "50", knownF100: "14/100", decId: "r2_d", decCorr: "0,14", pctId: "r2_p", pctCorr: "14%" },
+      { label: "Zeile 3", fracZId: "r3_fz", fracNId: "r3_fn", fracCorrZ: "7", fracCorrN: "10", f100Id: "r3_f", f100Corr: "70", knownDec: "0,7", pctId: "r3_p", pctCorr: "70%" },
+      { label: "Zeile 4", fracZId: "r4_fz", fracNId: "r4_fn", fracCorrZ: "17", fracCorrN: "20", f100Id: "r4_f", f100Corr: "85", decId: "r4_d", decCorr: "0,85", knownPct: "85%" }
+    ],
+    hint: "Kürze für die erste Spalte vollständig. Für die Hundertstel-Spalte erweitere auf den Nenner 100.",
+    solution: "Zeile 1: 3/5 = 60/100 = 0,6 = 60%\nZeile 2: 7/50 = 14/100 = 0,14 = 14%\nZeile 3: 7/10 = 70/100 = 0,7 = 70%\nZeile 4: 17/20 = 85/100 = 0,85 = 85%"
+  },
+  {
+    id: 6,
+    category: "Werte über 100%",
+    instruction: "Wandle die Werte in die beiden anderen Darstellungsformen um:",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "5/4",
+        inputs: [
+          { id: "a_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["1,25"] },
+          { id: "a_pct", type: "pct", width: "85px", sub: "Prozent", unit: "%", correct: ["125", "125%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "1,3",
+        inputs: [
+          { id: "b_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "13", correctN: "10" },
+          { id: "b_pct", type: "pct", width: "85px", sub: "Prozent", unit: "%", correct: ["130", "130%"] }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "200 %",
+        inputs: [
+          { id: "c_dec", type: "dec", width: "85px", sub: "Dezimalzahl", correct: ["2", "2,0"] },
+          { id: "c_frac", type: "frac", sub: "Bruch (Zähler / Nenner)", correctZ: "2", correctN: "1" }
+        ]
+      }
+    ],
+    hint: "Werte größer als 1 Ganzes entsprechen mehr als 100%. 1 Ganzes entspricht 100%, 2 Ganze entsprechen 200%.",
+    solution: "(a) 5/4 = 125/100 = 1,25 = 125%\n(b) 1,3 = 13/10 = 130/100 = 130%\n(c) 200% = 200/100 = 2 = 2/1"
+  },
+  {
+    id: 7,
+    category: "Grafische Darstellung (Gitter & Streifen)",
+    instruction: "Bestimme anhand der Abbildungen jeweils den gefärbten Anteil:",
+    visualType: "grid_tape",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "100er-Feld (36 blau)",
+        inputs: [
+          { id: "a_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "9", correctN: "25" },
+          { id: "a_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,36"] },
+          { id: "a_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["36", "36%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "Streifen (3 von 5)",
+        inputs: [
+          { id: "b_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "3", correctN: "5" },
+          { id: "b_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,6", "0,60"] },
+          { id: "b_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["60", "60%"] }
+        ]
+      }
+    ],
+    hint: "Zähle markierte Felder / Abschnitte im Verhältnis zur Gesamtzahl. Denke ans vollständige Kürzen.",
+    solution: "(a) 36/100 = 9/25 = 0,36 = 36%\n(b) 3/5 = 60/100 = 0,6 = 60%"
+  },
+  {
+    id: 8,
+    category: "Grafische Darstellung (Kreissektoren)",
+    instruction: "Berechne die gesuchten Größen für die Kreissektoren:",
+    visualType: "circle",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "Viertelkreis",
+        inputs: [
+          { id: "a_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["25", "25%"] },
+          { id: "a_deg", type: "dec", width: "80px", sub: "Mittelpunktswinkel", unit: "°", correct: ["90", "90°"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "Halbkreis",
+        inputs: [
+          { id: "b_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "1", correctN: "2" },
+          { id: "b_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,5", "0,50"] },
+          { id: "b_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["50", "50%"] }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "10 % Sektor",
+        inputs: [
+          { id: "c_deg", type: "dec", width: "80px", sub: "Mittelpunktswinkel", unit: "°", correct: ["36", "36°"] }
+        ]
+      }
+    ],
+    hint: "Ein Vollkreis besitzt einen Mittelpunktswinkel von 360°. Berechne die entsprechenden Bruchteile von 360°: Viertelkreis = 360° : 4; Halbkreis = 360° : 2; 10% = 360° : 10.",
+    solution: "(a) Viertelkreis: 1/4 = 25%; Mittelpunktswinkel = 360° : 4 = 90°\n(b) Halbkreis: 180° : 360° = 1/2 = 0,5 = 50%\n(c) 10% Sektor: 10% = 1/10; Mittelpunktswinkel = 360° : 10 = 36°"
+  },
+  {
+    id: 9,
+    category: "Sachaufgabe: Wahlfach",
+    instruction: "Klasse 6e (25 Kinder): 9 im Werken, Rest in Textilgestaltung (TG).",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "Werken (9 von 25)",
+        inputs: [
+          { id: "w_f100", type: "frac100", sub: "Nenner 100", correct: ["36"] },
+          { id: "w_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,36"] },
+          { id: "w_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["36", "36%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "TG (16 von 25)",
+        inputs: [
+          { id: "tg_f100", type: "frac100", sub: "Nenner 100", correct: ["64"] },
+          { id: "tg_dec", type: "dec", width: "90px", sub: "Dezimalzahl", correct: ["0,64"] },
+          { id: "tg_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["64", "64%"] }
+        ]
+      }
+    ],
+    hint: "TG: 25 - 9 = 16 Schüler. Erweitere 9/25 und 16/25 mit 4 auf den Nenner 100.",
+    solution: "Werken (9 von 25): 9/25 = 36/100 = 0,36 = 36%\nTG (16 von 25): 16/25 = 64/100 = 0,64 = 64%"
+  },
+  {
+    id: 10,
+    category: "Sachaufgabe: Sportumfrage",
+    instruction: "50 Kinder: 22 Fußball, 14 Schwimmen, der Rest Turnen.",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "Fußball (22 von 50)",
+        inputs: [
+          { id: "fb_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "11", correctN: "25" },
+          { id: "fb_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["44", "44%"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "Schwimmen (14 von 50)",
+        inputs: [
+          { id: "sw_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "7", correctN: "25" },
+          { id: "sw_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["28", "28%"] }
+        ]
+      },
+      {
+        prefix: "(c)",
+        term: "Turnen (14 von 50)",
+        inputs: [
+          { id: "tu_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "7", correctN: "25" },
+          { id: "tu_pct", type: "pct", width: "80px", sub: "Prozent", unit: "%", correct: ["28", "28%"] }
+        ]
+      }
+    ],
+    hint: "Turnen: 50 - 22 - 14 = 14 Kinder. Erweitere die Brüche jeweils mit 2 auf den Nenner 100.",
+    solution: "Fußball (22/50): 11/25 = 44/100 = 44%\nSchwimmen (14/50): 7/25 = 28/100 = 28%\nTurnen (14/50): 7/25 = 28/100 = 28%"
+  },
+  {
+    id: 11,
+    category: "Sachaufgabe: Smartphone-Akku",
+    instruction: "Smartphone-Akku mit 4000 mAh Gesamtkapazität:",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "Anzeige 35 %",
+        inputs: [
+          { id: "a_mah", type: "dec", width: "100px", sub: "Restladung", unit: "mAh", correct: ["1400", "1400 mAh"] },
+          { id: "a_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "7", correctN: "20" }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "Anteil 0,12",
+        inputs: [
+          { id: "b_pct", type: "pct", width: "80px", sub: "Prozentwert", unit: "%", correct: ["12", "12%"] },
+          { id: "b_mah", type: "dec", width: "100px", sub: "Restladung", unit: "mAh", correct: ["480", "480 mAh"] }
+        ]
+      }
+    ],
+    hint: "Berechne: 35 % von 4000 mAh = 0,35 · 4000 mAh bzw. 0,12 · 4000 mAh.",
+    solution: "(a) 35% = 35/100 = 7/20; 0,35 · 4000 mAh = 1400 mAh\n(b) 0,12 = 12%; 0,12 · 4000 mAh = 480 mAh"
+  },
+  {
+    id: 12,
+    category: "Sachaufgabe: Schulaufgabe",
+    instruction: "Schulaufgabe (20 Kinder): 3x Note 1; 2/5 der Klasse Note 2; 30 % Note 3; Rest Note 4 oder schlechter.",
+    equations: [
+      {
+        prefix: "(a)",
+        term: "Note 1",
+        inputs: [
+          { id: "n1", type: "dec", width: "70px", sub: "Schüler", unit: "Kinder", correct: ["3"] }
+        ]
+      },
+      {
+        prefix: "",
+        term: "Note 2 (2/5)",
+        inputs: [
+          { id: "n2", type: "dec", width: "70px", sub: "Schüler", unit: "Kinder", correct: ["8"] }
+        ]
+      },
+      {
+        prefix: "",
+        term: "Note 3 (30 %)",
+        inputs: [
+          { id: "n3", type: "dec", width: "70px", sub: "Schüler", unit: "Kinder", correct: ["6"] }
+        ]
+      },
+      {
+        prefix: "(b)",
+        term: "Note 4 oder schlechter",
+        inputs: [
+          { id: "n4_cnt", type: "dec", width: "70px", sub: "Anzahl", unit: "Kinder", correct: ["3"] },
+          { id: "n4_frac", type: "frac", sub: "gekürzter Bruch", correctZ: "3", correctN: "20" },
+          { id: "n4_dec", type: "dec", width: "85px", sub: "Dezimalzahl", correct: ["0,15"] },
+          { id: "n4_pct", type: "pct", width: "75px", sub: "Prozent", unit: "%", correct: ["15", "15%"] }
+        ]
+      }
+    ],
+    hint: "Berechne: 2/5 von 20 = (20 : 5) · 2 und 30 % von 20 = 0,3 · 20. Ziehe die Summe von 20 ab.",
+    solution: "(a) Note 1: 3 Kinder; Note 2: (20 : 5) · 2 = 8 Kinder; Note 3: 0,3 · 20 = 6 Kinder\n(b) Rest: 20 - (3 + 8 + 6) = 3 Schüler. Anteil: 3/20 = 15/100 = 0,15 = 15%"
+  }
+];
+
+let currentTaskIndex = 0;
+const solvedStatus = new Array(taskPool.length).fill(false);
+
+function initApp() {
+  renderNavBar();
+  loadTask(0);
+
+  document.getElementById("checkBtn").addEventListener("click", checkCurrentTask);
+  document.getElementById("hintBtn").addEventListener("click", toggleHint);
+  document.getElementById("solutionBtn").addEventListener("click", toggleSolution);
+}
+
+function renderNavBar() {
+  const nav = document.getElementById("navBar");
+  nav.innerHTML = "";
+  taskPool.forEach((task, index) => {
+    const btn = document.createElement("button");
+    btn.className = `task-chip ${index === currentTaskIndex ? "active" : ""} ${solvedStatus[index] ? "solved" : ""}`;
+    btn.textContent = task.id;
+    btn.title = `Aufgabe ${task.id}: ${task.category}`;
+    btn.addEventListener("click", () => loadTask(index));
+    nav.appendChild(btn);
+  });
+}
+
+function loadTask(index) {
+  currentTaskIndex = index;
+  renderNavBar();
+
+  const task = taskPool[index];
+  document.getElementById("taskCategory").innerHTML = `Aufgabe ${task.id} &middot; ${task.category}`;
+  document.getElementById("taskInstruction").innerHTML = formatMath(task.instruction);
+
+  const contextBox = document.getElementById("taskContext");
+  if (task.context) {
+    contextBox.style.display = "block";
+    contextBox.innerHTML = formatMath(task.context);
+  } else {
+    contextBox.style.display = "none";
+  }
+
+  const feedbackBox = document.getElementById("feedbackBox");
+  feedbackBox.className = "feedback-box";
+  feedbackBox.innerHTML = "";
+
+  const hintBox = document.getElementById("hintBox");
+  hintBox.className = "hint-box";
+  hintBox.innerHTML = formatMath(task.hint);
+
+  const solBox = document.getElementById("solutionBox");
+  solBox.className = "solution-box";
+  solBox.innerHTML = formatMath(task.solution);
+
+  renderVisuals(task);
+  renderInteractiveArea(task);
+}
+
+function renderVisuals(task) {
+  const container = document.getElementById("visualContainer");
+  container.innerHTML = "";
+
+  if (task.visualType === "grid_tape") {
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexWrap = "wrap";
+    wrap.style.gap = "28px";
+    wrap.style.justifyContent = "center";
+    wrap.style.alignItems = "center";
+
+    const gridDiv = document.createElement("div");
+    gridDiv.style.textAlign = "center";
+    gridDiv.innerHTML = `<p style="font-weight:700; margin-bottom:8px;">(a) 100er-Feld (36 von 100)</p>`;
+    const grid = document.createElement("div");
+    grid.className = "grid-container";
+    for (let i = 0; i < 100; i++) {
+      const cell = document.createElement("div");
+      cell.className = `grid-cell ${i < 36 ? "highlight" : ""}`;
+      grid.appendChild(cell);
+    }
+    gridDiv.appendChild(grid);
+
+    const tapeDiv = document.createElement("div");
+    tapeDiv.style.textAlign = "center";
+    tapeDiv.innerHTML = `<p style="font-weight:700; margin-bottom:8px;">(b) 10 cm-Streifen (3 von 5 Teilen)</p>`;
+    const tape = document.createElement("div");
+    tape.className = "tape-container";
+    for (let i = 0; i < 5; i++) {
+      const part = document.createElement("div");
+      part.className = `tape-block ${i < 3 ? "highlight" : ""}`;
+      part.textContent = `${(i + 1) * 2} cm`;
+      tape.appendChild(part);
+    }
+    tapeDiv.appendChild(tape);
+
+    wrap.appendChild(gridDiv);
+    wrap.appendChild(tapeDiv);
+    container.appendChild(wrap);
+  } else if (task.visualType === "circle") {
+    const wrap = document.createElement("div");
+    wrap.style.display = "flex";
+    wrap.style.flexWrap = "wrap";
+    wrap.style.gap = "24px";
+    wrap.style.justifyContent = "center";
+
+    // Linke Darstellung: Exakter Viertelkreis (90 Grad Sektor oben rechts)
+    const c1 = document.createElement("div");
+    c1.className = "circle-card";
+    c1.innerHTML = `
+      <p style="font-weight:700; margin-bottom:8px; color:var(--primary-dark);">Viertelkreis</p>
+      <svg viewBox="0 0 100 100" width="130" height="130">
+        <!-- Gesamtkreis-Hintergrund -->
+        <circle cx="50" cy="50" r="46" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" />
+        <!-- Exakter 90°-Sektor: Von 12 Uhr (50,4) bis 3 Uhr (96,50) -->
+        <path d="M 50 50 L 50 4 A 46 46 0 0 1 96 50 Z" fill="#0284c7" stroke="#003d6b" stroke-width="1.5" />
+        <!-- Mittelpunkt -->
+        <circle cx="50" cy="50" r="3" fill="#003d6b" />
+        <!-- Schenkelbegrenzungen zur Verdeutlichung -->
+        <line x1="50" y1="50" x2="50" y2="4" stroke="#003d6b" stroke-width="2" />
+        <line x1="50" y1="50" x2="96" y2="50" stroke="#003d6b" stroke-width="2" />
+      </svg>
+    `;
+
+    // Rechte Darstellung: Exakter Halbkreis (180 Grad Sektor rechte Hälfte)
+    const c2 = document.createElement("div");
+    c2.className = "circle-card";
+    c2.innerHTML = `
+      <p style="font-weight:700; margin-bottom:8px; color:var(--primary-dark);">Halbkreis</p>
+      <svg viewBox="0 0 100 100" width="130" height="130">
+        <!-- Gesamtkreis-Hintergrund -->
+        <circle cx="50" cy="50" r="46" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" />
+        <!-- Exakter 180°-Halbkreis: Von 12 Uhr (50,4) im Uhrzeigersinn nach 6 Uhr (50,96) -->
+        <path d="M 50 50 L 50 4 A 46 46 0 0 1 50 96 Z" fill="#0284c7" stroke="#003d6b" stroke-width="1.5" />
+        <!-- Mittelpunkt -->
+        <circle cx="50" cy="50" r="3" fill="#003d6b" />
+        <!-- Durchmesserlinie -->
+        <line x1="50" y1="4" x2="50" y2="96" stroke="#003d6b" stroke-width="2" />
+      </svg>
+    `;
+
+    wrap.appendChild(c1);
+    wrap.appendChild(c2);
+    container.appendChild(wrap);
+  }
+}
+
+function renderInteractiveArea(task) {
+  const container = document.getElementById("equationContainer");
+  container.innerHTML = "";
+
+  if (task.isTable) {
+    const table = document.createElement("table");
+    table.className = "table-view";
+    table.innerHTML = `
+      <thead>
+        <tr>
+          <th>Reihe</th>
+          <th>Gekürzter Bruch</th>
+          <th>Hundertstel-Bruch</th>
+          <th>Dezimalzahl</th>
+          <th>Prozent</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${task.rows.map(r => `
+          <tr>
+            <td><strong>${r.label}</strong></td>
+            <td>
+              ${r.known ? `${formatMath(r.known)}` : `
+                <div class="frac-input-unit">
+                  <input type="text" class="app-input" id="${r.fracZId}" placeholder="?" aria-label="Zähler gekürzt">
+                  <div class="frac-input-line"></div>
+                  <input type="text" class="app-input" id="${r.fracNId}" placeholder="?" aria-label="Nenner gekürzt">
+                </div>
+              `}
+            </td>
+            <td>
+              ${r.knownF100 ? `${formatMath(r.knownF100)}` : `
+                <div class="frac-input-unit">
+                  <input type="text" class="app-input" id="${r.f100Id}" placeholder="?" aria-label="Zähler auf 100">
+                  <div class="frac-input-line"></div>
+                  <span style="font-weight:700; padding:2px;">100</span>
+                </div>
+              `}
+            </td>
+            <td>
+              ${r.knownDec ? `<strong>${r.knownDec}</strong>` : `
+                <input type="text" class="app-input text-center" style="width:90px;" id="${r.decId}" placeholder="?" aria-label="Dezimalzahl">
+              `}
+            </td>
+            <td>
+              ${r.knownPct ? `<strong>${r.knownPct}</strong>` : `
+                <input type="text" class="app-input text-center" style="width:85px;" id="${r.pctId}" placeholder="%" aria-label="Prozent">
+              `}
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    `;
+    container.appendChild(table);
+    return;
+  }
+
+  // Gleichungszeilen: Angabe direkt vor dem Eingabefeld
+  task.equations.forEach(eq => {
+    const card = document.createElement("div");
+    card.className = "equation-card";
+
+    let html = "";
+    if (eq.prefix) {
+      html += `<span class="equation-prefix">${eq.prefix}</span>`;
+    }
+    if (eq.term) {
+      html += `<span class="math-term">${formatMath(eq.term)}</span>`;
+    }
+
+    eq.inputs.forEach((inp) => {
+      html += `<span class="rel-equal">=</span>`;
+
+      if (inp.type === "frac") {
+        html += `
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <div class="frac-input-unit">
+              <input type="text" inputmode="numeric" class="app-input text-center" id="${inp.id}_z" placeholder="?" aria-label="${inp.sub || 'Zähler'}">
+              <div class="frac-input-line"></div>
+              <input type="text" inputmode="numeric" class="app-input text-center" id="${inp.id}_n" placeholder="?" aria-label="${inp.sub || 'Nenner'}">
+            </div>
+            ${inp.unit ? `<span class="unit-label">${inp.unit}</span>` : ""}
+          </div>
+        `;
+      } else if (inp.type === "frac100") {
+        html += `
+          <div style="display:inline-flex; align-items:center; gap:6px;">
+            <div class="frac-input-unit">
+              <input type="text" inputmode="numeric" class="app-input text-center" id="${inp.id}" placeholder="?" aria-label="Zähler auf 100">
+              <div class="frac-input-line"></div>
+              <span style="font-weight:700; padding:2px;">100</span>
+            </div>
+          </div>
+        `;
+      } else {
+        const ph = inp.type === "pct" ? "%" : "?";
+        html += `
+          <div style="display:inline-flex; align-items:center;">
+            <input type="text" class="app-input text-center" id="${inp.id}" style="width:${inp.width || '90px'};" placeholder="${ph}" aria-label="${inp.sub || ''}">
+            ${inp.unit ? `<span class="unit-label">${inp.unit}</span>` : ""}
+          </div>
+        `;
+      }
+    });
+
+    card.innerHTML = html;
+    container.appendChild(card);
+  });
+}
+
+function cleanInput(val) {
+  if (!val) return "";
+  return val.trim().replace(/\s+/g, "").replace(".", ",");
+}
+
+function checkCurrentTask() {
+  const task = taskPool[currentTaskIndex];
+  const fb = document.getElementById("feedbackBox");
+  let allCorrect = true;
+  let emptyField = false;
+
+  if (task.isTable) {
+    task.rows.forEach(r => {
+      if (r.fracZId) {
+        const vz = cleanInput(document.getElementById(r.fracZId).value);
+        const vn = cleanInput(document.getElementById(r.fracNId).value);
+        if (!vz || !vn) emptyField = true;
+        if (vz !== r.fracCorrZ || vn !== r.fracCorrN) allCorrect = false;
+      }
+      if (r.f100Id) {
+        const v = cleanInput(document.getElementById(r.f100Id).value).replace("/100", "");
+        if (!v) emptyField = true;
+        if (v !== r.f100Corr) allCorrect = false;
+      }
+      if (r.decId) {
+        const v = cleanInput(document.getElementById(r.decId).value);
+        if (!v) emptyField = true;
+        if (v !== r.decCorr) allCorrect = false;
+      }
+      if (r.pctId) {
+        let v = cleanInput(document.getElementById(r.pctId).value);
+        if (!v.endsWith("%")) v += "%";
+        if (v === "%") emptyField = true;
+        if (v !== r.pctCorr) allCorrect = false;
+      }
+    });
+  } else {
+    task.equations.forEach(eq => {
+      eq.inputs.forEach(inp => {
+        if (inp.type === "frac") {
+          const vz = cleanInput(document.getElementById(`${inp.id}_z`).value);
+          const vn = cleanInput(document.getElementById(`${inp.id}_n`).value);
+          if (!vz || !vn) emptyField = true;
+          const validZ = Array.isArray(inp.correctZ) ? inp.correctZ : [inp.correctZ];
+          const validN = Array.isArray(inp.correctN) ? inp.correctN : [inp.correctN];
+          if (!validZ.includes(vz) || !validN.includes(vn)) {
+            allCorrect = false;
+          }
+        } else if (inp.type === "frac100") {
+          const v = cleanInput(document.getElementById(inp.id).value).replace("/100", "");
+          if (!v) emptyField = true;
+          if (!inp.correct.includes(v)) {
+            allCorrect = false;
+          }
+        } else {
+          const el = document.getElementById(inp.id);
+          let val = cleanInput(el.value);
+          if (!val) emptyField = true;
+
+          const isOk = inp.correct.some(corr => {
+            const cClean = cleanInput(corr);
+            return val === cClean || val === cClean.replace("%", "") || (val + "%") === cClean || val.replace("°", "") === cClean.replace("°", "");
+          });
+
+          if (!isOk) allCorrect = false;
+        }
+      });
+    });
+  }
+
+  fb.classList.remove("correct", "incorrect");
+  fb.classList.add("visible");
+
+  if (emptyField) {
+    fb.classList.add("incorrect");
+    fb.innerHTML = "Bitte fülle alle Eingabefelder aus, bevor du deine Antwort überprüfst.";
+    return;
+  }
+
+  if (allCorrect) {
+    fb.classList.add("correct");
+    fb.innerHTML = "<strong>Ausgezeichnet!</strong> Alle mathematischen Darstellungsformen sind korrekt berechnet und vollständig gekürzt.";
+    solvedStatus[currentTaskIndex] = true;
+    renderNavBar();
+  } else {
+    fb.classList.add("incorrect");
+    fb.innerHTML = "<strong>Noch nicht ganz richtig:</strong> Überprüfe deine Rechnungen. Achte darauf, das Komma als Dezimaltrennzeichen zu verwenden und Brüche vollständig zu kürzen!";
+  }
+}
+
+function toggleHint() {
+  document.getElementById("hintBox").classList.toggle("visible");
+}
+
+function toggleSolution() {
+  document.getElementById("solutionBox").classList.toggle("visible");
+}
+
+window.addEventListener("DOMContentLoaded", initApp);
+</script>
+
+</body>
+</html>
